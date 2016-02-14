@@ -9,13 +9,15 @@
 #include "KEENIO_SDK.h"
 
 
-	cJSON *root;
+cJSON *root;
 
-	using namespace KEENIO_REST;
+using namespace KEENIO_REST;
+using namespace KEENIO_REST::ANALYSES;
 
 
 int main()
 {
+
 	KEEN_IO keen;
 
 
@@ -23,13 +25,20 @@ int main()
 
 	keenProj = keen.addProject();
 
-	requestProject(keenProj, "5645481d59949a52de2df5ce", true, true);
+	requestProject(keenProj, "56b6369196773d7eaa5f4bca", true, true);
 
 	KEENIO_PROJECT* projReference = keen.getProject(0);
-	
-	//requestProject(keenProj, "5645481d59949a52de2df5ce", false, false);
-	//requestCollections(keenProj, "5645481d59949a52de2df5ce");
-	//requestEvents(keenProj, "5645481d59949a52de2df5ce");
+
+	KEENIO_REST::ANALYSES::KEENIO_QUERY q;
+	q.requestSavedQueries("56b6369196773d7eaa5f4bca");
+	cJSON* query = q.getQuery(0);
+
+	//GET RESULTS OF UNKNOWN QUERY NAME, OR INDEX
+	cJSON* queryJSON = q.getItemByName(query, "query_name");
+	printf(q.savedQueryResults("56b6369196773d7eaa5f4bca", queryJSON).c_str());
+
+	//GET RESULTS OF KNOWN QUERY NAME
+	printf("\n\n%s\n\n", q.savedQueryResults("56b6369196773d7eaa5f4bca", "pageviews").c_str());
 
 	return 0;
 }

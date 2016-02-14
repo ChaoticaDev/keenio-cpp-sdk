@@ -5,6 +5,16 @@
 
 using namespace std;
 
+#include <string>
+
+namespace StringUtility {
+	std::string urlEncode(std::string url);
+	std::string urlDecode(const std::string &encoded);
+
+	std::string charToHex(unsigned char c);
+	unsigned char hexToChar(const std::string &str);
+}
+
 class STRING_UTILS {
 
 public:

@@ -145,7 +145,7 @@ public:
 			*kprop->property_name = (const string)STRING_UTILS::gen_random_string(20);
 		}
 
-		
+
 		return this->events[keenevent_count].add(kprop);
 
 	}
@@ -217,7 +217,7 @@ public:
 
 	/*KEENIO_PROJECT* getProject(string project_name) {
 
-		return this->projects_MAP_S[project_name];
+	return this->projects_MAP_S[project_name];
 	}*/
 
 	int projectCount() {
@@ -233,6 +233,169 @@ namespace KEENIO_REST {
 		const string READ_KEY = "";
 		const string WRITE_KEY = "";
 	};
+
+	namespace ANALYSES {
+
+		class KEENIO_QUERY {
+		public:
+			string query_name;
+			map<string, cJSON*> queries;
+			map<int, cJSON*> queries_MAPINT;
+
+			cJSON* getItemByName(cJSON* item, string name) {
+				while (item != NULL) {
+					if (item->string != NULL) {
+						if (item->string == name) {
+
+							return item;
+						}
+					}
+
+
+					item = item->next;
+				}
+			}
+
+			string toString(cJSON* jsonObj) {
+				return cJSON_Print(jsonObj);
+			}
+
+			void requestSavedQueries(string project_id) {
+			RESTART:
+				string collection;
+				string url = "https://api.keen.io/3.0/projects/" + project_id + "/queries/saved?api_key=" + AUTH::MASTER_KEY;
+
+				web::uri* uriL;
+				utility::string_t tt;
+				wstring tg = STRING_UTILS::utf8toUtf16(url);
+
+				tt.append(tg);
+				uriL = new web::uri(tg);
+
+				http_client client(tg);
+				Concurrency::task<web::http::http_response> resp = client.request(methods::GET);
+				collection = STRING_UTILS::fromWString(resp.get().to_string());
+
+				int startpos = collection.find("[");
+				int startpos2 = collection.find("{");
+
+				if (startpos2 > -1 && startpos2 < startpos) {
+					startpos = startpos2;
+				}
+
+				if (!startpos) {
+					startpos = collection.find("{");
+				}
+
+				if (startpos < 0) {
+
+					printf("\nKEENIO REST ERROR!.... TRYING AGAIN!\n");
+					goto RESTART;
+				}
+
+				collection = collection.substr(startpos, collection.length() - 2);
+
+				cJSON *root = cJSON_Parse(collection.c_str());
+
+				int childCount = cJSON_GetArraySize(root);
+				for (int i = 0; i < childCount; i++) {
+					cJSON* tmpJsonObj = cJSON_GetArrayItem(cJSON_GetArrayItem(root, i), 0);
+					queries[this->getItemByName(tmpJsonObj, "query_name")->valuestring] = tmpJsonObj;
+					queries_MAPINT[queries_MAPINT.size()] = queries[this->getItemByName(tmpJsonObj, "query_name")->valuestring];
+				}
+
+				return;
+
+			}
+
+			cJSON* getQuery(int index) {
+				return queries_MAPINT[index];
+			}
+
+			string savedQueryResults(string project_id, cJSON* jsonObj) {
+			RESTART:
+				string collection;
+				string url = "https://api.keen.io/3.0/projects/" + project_id + "/queries/saved/" + jsonObj->valuestring + "/result?api_key=" + AUTH::MASTER_KEY;
+
+				web::uri* uriL;
+				utility::string_t tt;
+				wstring tg = STRING_UTILS::utf8toUtf16(url);
+
+				tt.append(tg);
+				uriL = new web::uri(tg);
+
+				http_client client(tg);
+				Concurrency::task<web::http::http_response> resp = client.request(methods::GET);
+				collection = STRING_UTILS::fromWString(resp.get().to_string());
+
+				int startpos = collection.find("[");
+				int startpos2 = collection.find("{");
+
+				if (startpos2 > -1 && startpos2 < startpos) {
+					startpos = startpos2;
+				}
+
+				if (!startpos) {
+					startpos = collection.find("{");
+				}
+
+				if (startpos < 0) {
+
+					printf("\nKEENIO REST ERROR!.... TRYING AGAIN!\n");
+					goto RESTART;
+				}
+
+				collection = collection.substr(startpos, collection.length() - 2);
+
+				cJSON *root = cJSON_Parse(collection.c_str());
+
+				return collection;
+
+			}
+
+			string savedQueryResults(string project_id, string query_name) {
+			RESTART:
+				string collection;
+				string url = "https://api.keen.io/3.0/projects/" + project_id + "/queries/saved/" + query_name + "/result?api_key=" + AUTH::MASTER_KEY;
+
+				web::uri* uriL;
+				utility::string_t tt;
+				wstring tg = STRING_UTILS::utf8toUtf16(url);
+
+				tt.append(tg);
+				uriL = new web::uri(tg);
+
+				http_client client(tg);
+				Concurrency::task<web::http::http_response> resp = client.request(methods::GET);
+				collection = STRING_UTILS::fromWString(resp.get().to_string());
+
+				int startpos = collection.find("[");
+				int startpos2 = collection.find("{");
+
+				if (startpos2 > -1 && startpos2 < startpos) {
+					startpos = startpos2;
+				}
+
+				if (!startpos) {
+					startpos = collection.find("{");
+				}
+
+				if (startpos < 0) {
+
+					printf("\nKEENIO REST ERROR!.... TRYING AGAIN!\n");
+					goto RESTART;
+				}
+
+				collection = collection.substr(startpos, collection.length() - 2);
+
+				cJSON *root = cJSON_Parse(collection.c_str());
+
+				return collection;
+
+			}
+		};
+
+	}
 
 	static void requestEvents(KEENIO_PROJECT* keenProj, string project_id, bool localLoad = false, string response_body = "") {
 	RESTART:
@@ -264,7 +427,7 @@ namespace KEENIO_REST {
 
 			if (startpos < 0) {
 
-				printf("KEEN ERROR!.... TRYING AGAIN!");
+				printf("\nKEENIO REST ERROR!.... TRYING AGAIN!\n");
 				goto RESTART;
 			}
 
@@ -285,8 +448,6 @@ namespace KEENIO_REST {
 		collect2 = collect2->next;
 		collect2 = collect2->next;
 
-		printf(collection.c_str());
-
 		int collect_size = cJSON_GetArraySize(collect2);
 		(*keenProj).clearEvents();
 		for (int i = 0; i < collect_size; i++) {
@@ -296,12 +457,12 @@ namespace KEENIO_REST {
 			int propssize = cJSON_GetArraySize(props);
 			KEENIO_EVENT kCollection;
 
-				KEENIO_PROPERTY kProp;
-				kProp.property_name = new string(cJSON_GetArrayItem(props, 0)->valuestring);
-				kProp.url = new string(cJSON_GetArrayItem(props, 1)->valuestring);
+			KEENIO_PROPERTY kProp;
+			kProp.property_name = new string(cJSON_GetArrayItem(props, 0)->valuestring);
+			kProp.url = new string(cJSON_GetArrayItem(props, 1)->valuestring);
 
 
-				(*keenProj).addEvent(&kProp);
+			(*keenProj).addEvent(&kProp);
 		}
 	}
 
@@ -333,7 +494,7 @@ namespace KEENIO_REST {
 
 		if (startpos < 0) {
 
-			printf("KEEN ERROR!.... TRYING AGAIN!");
+			printf("\nKEENIO REST ERROR!.... TRYING AGAIN!\n");
 			goto RESTART;
 		}
 
@@ -342,7 +503,6 @@ namespace KEENIO_REST {
 		cJSON *root2 = cJSON_Parse(collection.c_str());
 		cJSON *collect = cJSON_GetArrayItem(root2, 0);
 
-		printf(collection.c_str());
 
 		int root2_size = cJSON_GetArraySize(root2);
 		(*keenProj).clearCollections();
@@ -397,12 +557,11 @@ namespace KEENIO_REST {
 
 		if (startpos < 0) {
 
-			printf("KEEN ERROR!.... TRYING AGAIN!");
+			printf("\nKEENIO REST ERROR!.... TRYING AGAIN!\n");
 			goto RESTART;
 		}
 
 		body = body.substr(startpos, body.length() - 1);
-		printf(body.c_str());
 
 		cJSON *root = cJSON_Parse(body.c_str());
 
