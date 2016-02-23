@@ -1,5 +1,5 @@
 ========================================================================
-    DYNAMIC LINK LIBRARY : Carrots_KeenIO Project Overview
+    Carrots_KeenIO Project Overview
 ========================================================================
 
 KeenIO C++ SDK (Community Supported).
