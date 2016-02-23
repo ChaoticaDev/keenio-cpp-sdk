@@ -38,7 +38,6 @@ This project uses WinSock to connect to a server, and retrieve information.
 	
 	kHTTP.addParam("api_key", kHTTP._masterKey);
 
-
 ========================================================================
     Complete example
 ========================================================================
