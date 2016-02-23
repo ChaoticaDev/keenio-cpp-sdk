@@ -2,39 +2,68 @@
     DYNAMIC LINK LIBRARY : Carrots_KeenIO Project Overview
 ========================================================================
 
-AppWizard has created this Carrots_KeenIO DLL for you.
+KeenIO C++ SDK (Community Supported).
 
-This file contains a summary of what you will find in each of the files that
-make up your Carrots_KeenIO application.
+This project is geared towards developers manging big data with C++ (KeenIO).
+This project uses WinSock to connect to a server, and retrieve information.
 
 
-Carrots_KeenIO.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
+## KEENIO_HTTP : HTTP sockets handler
 
-Carrots_KeenIO.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
+## KEENIO_CLIENT : KeenIO Query Manager
 
-Carrots_KeenIO.cpp
-    This is the main DLL source file.
+## KEENIO_HTTP::reqURL : Request url
 
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
 
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named Carrots_KeenIO.pch and a precompiled types file named StdAfx.obj.
+## Settings Keys;
 
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
+KEENIO_CLIENT kCLIENT; //KEENIO CLIENT
 
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
+kCLIENT.masterKey("<master_key>");
 
-/////////////////////////////////////////////////////////////////////////////
+kCLIENT.readKey("<read_key>");
+
+kCLIENT.writeKey("<write_key>");
+
+
+## Adding headers
+KEENIO_HTTP kHTTP; //KEENIO_HTTP_CLIENT
+
+kHTTP.addHeader("User-Agent", "Carrots/KeenIO HTTP-1.0");
+
+
+## Adding query params
+
+KEENIO_HTTP kHTTP; //KEENIO_HTTP_CLIENT
+
+kHTTP.addParam("api_key", kHTTP._masterKey);
+
+
+========================================================================
+    Complete example
+========================================================================
+
+int main() {
+	KEENIO_HTTP kHTTP;
+	KEENIO_CLIENT kCLIENT;
+	kHTTP.reqURL = "/3.0/projects/56b6369196773d7eaa5f4bca/queries/count";
+	kHTTP.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+	kHTTP.addHeader("Accept-Encoding", "gzip, deflate, sdch");
+	kHTTP.addHeader("Accept-Language", "en-US,en;q=0.8");
+	kHTTP.addHeader("Connection", "keep-alive");
+	kHTTP.addHeader("Host", "api.keen.io");
+	kHTTP.addHeader("Upgrade-Insecure-Requests", "1");
+	kHTTP.addHeader("User-Agent", "Carrots/KeenIO HTTP-1.0");
+
+	kHTTP.addParam("api_key", kHTTP._masterKey);
+	kHTTP.addParam("event_collection", "pageview");
+	kHTTP.addParam("timezone", "UTC");
+	kHTTP.addParam("timeframe", "this_14_days");
+
+	kCLIENT.request(kHTTP);
+
+	printf(kCLIENT.body.c_str());
+
+    //QUERY URL:: https://api.keen.io/3.0/projects/56b6369196773d7eaa5f4bca/queries/count?api_key=<key>&event_collection=pageview&timezone=UTC&timeframe=this_14_days&filters=%5B%5D
+	return 1; // Returns {"result":170}
+}
