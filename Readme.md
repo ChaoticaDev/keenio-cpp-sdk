@@ -15,7 +15,7 @@ This project uses WinSock to connect to a server, and retrieve information.
 ## KEENIO_HTTP::reqURL : Request url
 
 
-## Settings Keys;
+## Setting Keys;
 
 	KEENIO_CLIENT kCLIENT; //KEENIO CLIENT
 	
