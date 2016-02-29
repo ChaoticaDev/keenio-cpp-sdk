@@ -54,7 +54,7 @@ This project uses WinSock to connect to a server, and retrieve information.
 		kHTTP.addHeader("Upgrade-Insecure-Requests", "1");
 		kHTTP.addHeader("User-Agent", "Carrots/KeenIO HTTP-1.0");
 		
-		kHTTP.addParam("api_key", kHTTP._masterKey);
+		kHTTP.addParam("api_key", kHTTP.masterKey());
 		kHTTP.addParam("event_collection", "pageview");
 		kHTTP.addParam("timezone", "UTC");
 		kHTTP.addParam("timeframe", "this_14_days");
