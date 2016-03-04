@@ -43,26 +43,38 @@ This project uses WinSock to connect to a server, and retrieve information.
 ========================================================================
 
 	int main() {
-		KEENIO_HTTP kHTTP;
-		KEENIO_CLIENT kCLIENT;
-		kHTTP.reqURL = "/3.0/projects/56b6369196773d7eaa5f4bca/queries/count";
-		kHTTP.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-		kHTTP.addHeader("Accept-Encoding", "gzip, deflate, sdch");
-		kHTTP.addHeader("Accept-Language", "en-US,en;q=0.8");
-		kHTTP.addHeader("Connection", "keep-alive");
-		kHTTP.addHeader("Host", "api.keen.io");
-		kHTTP.addHeader("Upgrade-Insecure-Requests", "1");
-		kHTTP.addHeader("User-Agent", "Carrots/KeenIO HTTP-1.0");
+		KEENIO_CLIENT* kCLIENT = new KEENIO_CLIENT();
+		kCLIENT->kHTTP.reqURL = "https://api.keen.io/3.0/projects/56b6369196773d7eaa5f4bca/events";
+		kCLIENT->kHTTP.addDefHeaders();
+
+		kCLIENT->kHTTP.addParam("api_key", kCLIENT->kHTTP._masterKey);
+		kCLIENT->kHTTP.addParam("event_collection", "pageview");
+		kCLIENT->kHTTP.addParam("timezone", "UTC");
+		kCLIENT->kHTTP.addParam("timeframe", "this_14_days");
+
+		kCLIENT->request(kCLIENT->kHTTP);
+
+		printf(kCLIENT->body.c_str());
 		
-		kHTTP.addParam("api_key", kHTTP.masterKey());
-		kHTTP.addParam("event_collection", "pageview");
-		kHTTP.addParam("timezone", "UTC");
-		kHTTP.addParam("timeframe", "this_14_days");
-		
-		kCLIENT.request(kHTTP);
-		
-		printf(kCLIENT.body.c_str());
-		
-		//QUERY URL:: https://api.keen.io/3.0/projects/56b6369196773d7eaa5f4bca/queries/count?api_key=<key>&event_collection=pageview&timezone=UTC&timeframe=this_14_days&filters=%5B%5D
+		//QUERY URL:: https://api.keen.io/3.0/projects/56b6369196773d7eaa5f4bca/queries/count?api_key=<key>&event_collection=pageview&timezone=UTC&timeframe=this_14_days
 		return 1; // Returns {"result":170}
 	}
+
+## KeenIO Query Language:
+The goal is to build a complete query-language that eases the process of grabbing KeenIO data.
+
+Syntax:
+
+		<selector> <collection_name>(<master_key>) <attribute>=<value>
+		
+		count media_play(56c6fe8690e4bd30596e08ff) event_collection=media_play timezone=UTC timeframe=this_14_days
+
+Example:
+		KEENIO_QUERYLANGUAGE* keenQL = new KEENIO_QUERYLANGUAGE();
+		
+		keenQL->KEY("EBE009B95941B225CA2A357CEFF401DCB0C2768066DAEB99690CCEFC51FFF65A"); //MASTER KEY
+		
+		keenQL->QueryExec("count media_play(56c6fe8690e4bd30596e08ff) event_collection=media_play timezone=UTC timeframe=this_14_days");
+
+		printf("---QUERY REQUEST---\n%s", (char*)keenQL->ProcessQuery().c_str());
+	
