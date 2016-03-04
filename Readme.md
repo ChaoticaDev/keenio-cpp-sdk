@@ -78,3 +78,5 @@ Example:
 
 		printf("---QUERY REQUEST---\n%s", (char*)keenQL->ProcessQuery().c_str());
 	
+
+Disclaimer: This product is in no way affiliated with KeenIO -- This is a community project, though, we would be very open to KeenIO picking up the project in the future! Keen? :D
