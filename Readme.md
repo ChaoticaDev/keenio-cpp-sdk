@@ -86,5 +86,21 @@ Example:
 
 		printf("---QUERY REQUEST---\n%s", (char*)keenQL->ProcessQuery().c_str());
 	
+# Adding filters to keenQL queries
+		if propertyname=property_value equals
+		if propertyname<>property_value not equals
+		if propertyname>property_value greater than
+		if propertyname<property_value less than
+		if propertyname>=property_value greater than equal to
+		if propertyname<=property_value less than equal to
+		if propertyname^=property_value contains
+		if propertyname!^=property_value not contains
+		example:
+			//if property_name is greater than 45
+			if property_name>45
+			
+			//if property_name contains string 'hello mate'
+			if property_name^='hello mate'
+
 
 Disclaimer: This product is in no way affiliated with KeenIO -- This is a community project, though, we would be very open to KeenIO picking up the project in the future! Keen? :D
