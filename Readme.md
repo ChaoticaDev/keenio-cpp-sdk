@@ -65,11 +65,11 @@ The goal is to build a complete query-language that eases the process of grabbin
 
 Syntax:
 
-		https://api.keen.io/3.0/projects/56c6fe8690e4bd30596e08ff/queries/count?api_key=EBE009B95941B225CA2A357CEFF401DCB0C2768066DAEB99690CCEFC51FFF65A&event_collection=media_play&timezone=UTC&timeframe=this_14_days
+		https://api.keen.io/3.0/projects/56c6fe8690e4bd30596e08ff/queries/count?api_key=<master_key>&event_collection=media_play&timezone=UTC&timeframe=this_14_days
 		
 		<selector> <collection_name>(<master_key>) <attribute>=<value>
 		
-		Query Example: count media_play(56c6fe8690e4bd30596e08ff) event_collection=media_play timezone=UTC timeframe=this_14_days
+		Query Example: count media_play(<project_id>) event_collection=media_play timezone=UTC timeframe=this_14_days
 		
 
 In the current version, keenQL syntax order does not matter. This highly likely to change very soon.
@@ -80,9 +80,9 @@ For now, the syntax scope is limited to `sum` and `count`.
 Example:
 		KEENIO_QUERYLANGUAGE* keenQL = new KEENIO_QUERYLANGUAGE();
 		
-		keenQL->KEY("EBE009B95941B225CA2A357CEFF401DCB0C2768066DAEB99690CCEFC51FFF65A"); //MASTER KEY
+		keenQL->KEY("<master_key>"); //MASTER KEY
 		
-		keenQL->QueryExec("count media_play(56c6fe8690e4bd30596e08ff) event_collection=media_play timezone=UTC timeframe=this_14_days");
+		keenQL->QueryExec("count media_play(<project_id>) event_collection=media_play timezone=UTC timeframe=this_14_days");
 
 		printf("---QUERY REQUEST---\n%s", (char*)keenQL->ProcessQuery().c_str());
 	
