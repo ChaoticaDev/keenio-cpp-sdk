@@ -44,7 +44,7 @@ This project uses WinSock to connect to a server, and retrieve information.
 
 	int main() {
 		KEENIO_CLIENT* kCLIENT = new KEENIO_CLIENT();
-		kCLIENT->kHTTP.reqURL = "https://api.keen.io/3.0/projects/56b6369196773d7eaa5f4bca/events";
+		kCLIENT->kHTTP.reqURL = "https://api.keen.io/3.0/projects/<project_id>/events";
 		kCLIENT->kHTTP.addDefHeaders();
 
 		kCLIENT->kHTTP.addParam("api_key", kCLIENT->kHTTP._masterKey);
@@ -56,7 +56,7 @@ This project uses WinSock to connect to a server, and retrieve information.
 
 		printf(kCLIENT->body.c_str());
 		
-		//QUERY URL:: https://api.keen.io/3.0/projects/56b6369196773d7eaa5f4bca/queries/count?api_key=<key>&event_collection=pageview&timezone=UTC&timeframe=this_14_days
+		//QUERY URL:: https://api.keen.io/3.0/projects/<project_id>/queries/count?api_key=<key>&event_collection=pageview&timezone=UTC&timeframe=this_14_days
 		return 1; // Returns {"result":170}
 	}
 
