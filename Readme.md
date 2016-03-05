@@ -64,10 +64,17 @@ This project uses WinSock to connect to a server, and retrieve information.
 The goal is to build a complete query-language that eases the process of grabbing KeenIO data.
 
 Syntax:
-
+		https://api.keen.io/3.0/projects/56c6fe8690e4bd30596e08ff/queries/count?api_key=EBE009B95941B225CA2A357CEFF401DCB0C2768066DAEB99690CCEFC51FFF65A&event_collection=media_play&timezone=UTC&timeframe=this_14_days
+		
 		<selector> <collection_name>(<master_key>) <attribute>=<value>
 		
-		count media_play(56c6fe8690e4bd30596e08ff) event_collection=media_play timezone=UTC timeframe=this_14_days
+		Query Example: count media_play(56c6fe8690e4bd30596e08ff) event_collection=media_play timezone=UTC timeframe=this_14_days
+		
+
+In the current version, keenQL syntax order does not matter. This highly likely to change very soon.
+
+For now, the syntax scope is limited to `sum` and `count`.
+		
 
 Example:
 		KEENIO_QUERYLANGUAGE* keenQL = new KEENIO_QUERYLANGUAGE();
