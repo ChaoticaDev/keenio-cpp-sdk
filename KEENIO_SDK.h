@@ -337,14 +337,17 @@ namespace KEENIO_QUERYLANGUAGE {
 			//COUNT media_play(56c6fe8690e4bd30596e08ff) filters: keenid>0
 			int STMT_TYPE;
 
-			if (queryText.find("COUNT") >= 0) {
+			if (queryText.find("count") >= 0) {
 				STMT_TYPE = 0;
 			}
-			else if (queryText.find("SUM") >= 0) {
+			else if (queryText.find("count_unique") >= 0) {
 				STMT_TYPE = 1;
 			}
-			else if (queryText.find("AVERAGE") >= 0) {
+			else if (queryText.find("sum") >= 0) {
 				STMT_TYPE = 2;
+			}
+			else if (queryText.find("average") >= 0) {
+				STMT_TYPE = 3;
 			}
 			else {
 				STMT_TYPE = 666;
@@ -383,6 +386,9 @@ namespace KEENIO_QUERYLANGUAGE {
 						goto restart_ql_loop;
 					}
 					if (word == "count") {
+						sel = word;
+					}
+					else if (word == "count_unique") {
 						sel = word;
 					}
 					else if (word == "sum") {
