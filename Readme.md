@@ -72,9 +72,17 @@ Syntax:
 		Query Example: count media_play(<project_id>) event_collection=media_play timezone=UTC timeframe=this_14_days
 		
 
-In the current version, keenQL syntax order does not matter. This highly likely to change very soon.
+In the current version, keenQL syntax is very sensitive to spacing. All `property=value` filters should contain no spaces, unless the value is surrounded by single quotes.
+
+		property='my value' //is ok
+		property<>5 //is ok
+		property > 3 //is not ok
+		property = 'my value' //is not ok
+		propert=my value //is not ok
 
 For now, the syntax scope is limited to `sum` and `count`.
+
+Additionally, the only word ordering that matters is when adding filters (using the `if` statement). This must appear at the end.
 		
 
 Example:
@@ -82,7 +90,7 @@ Example:
 		
 		keenQL->KEY("<master_key>"); //MASTER KEY
 		
-		keenQL->QueryExec("count media_play(<project_id>) event_collection=media_play timezone=UTC timeframe=this_14_days");
+		keenQL->QueryExec("count media_play(<project_id>) event_collection=media_play timezone=UTC timeframe=this_14_days if x>4 | x<100 | path='path to file'");
 
 		printf("---QUERY REQUEST---\n%s", (char*)keenQL->ProcessQuery().c_str());
 	
