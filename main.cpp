@@ -4,7 +4,7 @@
 int main() {
 	KEENIO_QUERYLANGUAGE* keenQL = new KEENIO_QUERYLANGUAGE();
 	keenQL->KEY("<master_key>");
-	keenQL->QueryExec("count media_play(<project_id>) event_collection=media_play timezone=UTC timeframe=this_14_days if keen.id>0");
+	keenQL->QueryExec("count media_play(<project_id>) event_collection=media_play timezone=UTC timeframe=this_14_days if keen.id>0 | keen.id>100");
 
 	printf("---QUERY REQUEST---\n%s\n\n\n--RAW REQUEST---\n", (char*)keenQL->ProcessQuery().c_str());
 	
