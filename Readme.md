@@ -112,5 +112,11 @@ Example:
 			
 			count media_play(<project_id>) event_collection=media_play timezone=UTC timeframe=this_14_days if username='Jane doe'
 
+# Exporting report syntax
+
+		.export=file_name.txt >> ...
+	
+		.export=results.txt >> count media_play(<project_id>) event_collection=media_play timezone=UTC timeframe=this_14_days
+	
 
 Disclaimer: This product is in no way affiliated with KeenIO -- This is a community project, though, we would be very open to KeenIO picking up the project in the future! Keen? :D
