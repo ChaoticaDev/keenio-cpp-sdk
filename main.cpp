@@ -1,16 +1,27 @@
 #pragma once
 #include "KEENIO_SDK.h"
 
-int main() {
-	KEENIO_QUERYLANGUAGE* keenQL = new KEENIO_QUERYLANGUAGE();
-	keenQL->KEY("<master_key>");
-	keenQL->QueryExec("count media_play(<project_id>) event_collection=media_play timezone=UTC timeframe=this_14_days if keen.id>0 | keen.id>100");
 
-	printf("---QUERY REQUEST---\n%s\n\n\n--RAW REQUEST---\n", (char*)keenQL->ProcessQuery().c_str());
-	
-	
+
+#define KQL_EQUAL "eq" //fully supported
+#define KQL_NOT_EQUAL "ne" //fully supported
+#define KQL_GREATER_THAN "gt" //
+#define KQL_GREATER_THAN_EQUAL "gte" //
+#define KQL_LESS_THAN "lt" //
+#define KQL_LESS_THAN_EQUAL "lte" //
+#define KQL_CONTAINS "contains"
+#define KQL_NOT_CONTAINS "not_contains"
+
+int main() {
+	KEENIO_QUERYLANGUAGE::KEENIO_QUERY* keenQL = new KEENIO_QUERYLANGUAGE::KEENIO_QUERY();
+	keenQL->KEY("<key>");
+	keenQL->QueryExec(".export=example_exp.txt >> count pageview(56b6369196773d7eaa5f4bca) event_collection=pageview timezone=UTC timeframe=this_100_days if keen.id>0 && path<>'//'");
+
+	printf("---QUERY REQUEST---\n%s", (char*)keenQL->ProcessQuery().c_str());
+
+
 	KEENIO_CLIENT* kCLIENT = new KEENIO_CLIENT();
-	kCLIENT->kHTTP.reqURL = "https://api.keen.io/3.0/projects/<project_id>/events";
+	kCLIENT->kHTTP.reqURL = "https://api.keen.io/3.0/projects/56b6369196773d7eaa5f4bca/events";
 	kCLIENT->kHTTP.addDefHeaders();
 
 	kCLIENT->kHTTP.addParam("api_key", kCLIENT->kHTTP._masterKey);
@@ -20,6 +31,6 @@ int main() {
 
 	kCLIENT->request(kCLIENT->kHTTP);
 
-	printf(kCLIENT->body.c_str());
+	//printf(kCLIENT->body.c_str());
 	return 0;
 }
