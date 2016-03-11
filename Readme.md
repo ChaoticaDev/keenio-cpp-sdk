@@ -4,7 +4,7 @@
 
 KeenIO C++ SDK and Query language.
 
-This porject covers most of KeenIO's APIs, and also includes a query language similar to SQL which allows for quick, easy data extraction.
+This project covers most of KeenIO's APIs, and also includes a query language similar to SQL which allows for quick, easy data extraction.
 
 ## WIKI
  Checkout the [wiki](https://github.com/UberSnip/keenio-cpp-sdk/wiki) for detailed implementation of this project :D
