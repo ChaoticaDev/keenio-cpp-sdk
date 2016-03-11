@@ -10,7 +10,9 @@ This porject covers most of KeenIO's APIs, and also includes a query language si
  Checkout the [wiki](https://github.com/UberSnip/keenio-cpp-sdk/wiki) for detailed implementation of this project :D
  
  [The C++ Framework](https://github.com/UberSnip/keenio-cpp-sdk/wiki/KeenIO-CPP-SDK)
+ 
  [keenQL, SQL for KEENIO](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL)
+ 
  [keenQL filters](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL::Filters)
 
 
