@@ -19,24 +19,21 @@ This project uses WinSock to connect to a server, and retrieve information.
 
 	KEENIO_CLIENT kCLIENT; //KEENIO CLIENT
 	
-	kCLIENT.masterKey("<master_key>");
+	kCLIENT->kHTTP->masterKey("<master_key>");
 	
-	kCLIENT.readKey("<read_key>");
+	kCLIENT->kHTTP->readKey("<read_key>");
 	
-	kCLIENT.writeKey("<write_key>");
+	kCLIENT->kHTTP->writeKey("<write_key>");
 
 
 ## Adding headers
-	KEENIO_HTTP kHTTP; //KEENIO_HTTP_CLIENT
 	
-	kHTTP.addHeader("User-Agent", "Carrots/KeenIO HTTP-1.0");
+	kCLIENT->kHTTP.addHeader("User-Agent", "Carrots/KeenIO HTTP-1.0");
 
 
 ## Adding query params
-
-	KEENIO_HTTP kHTTP; //KEENIO_HTTP_CLIENT
 	
-	kHTTP.addParam("api_key", kHTTP._masterKey);
+	kCLIENT->kHTTP.addParam("api_key", kHTTP._masterKey);
 
 ========================================================================
     Complete example
