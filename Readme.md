@@ -10,7 +10,7 @@ This project uses WinSock to connect to a server, and retrieve information.
 
 ## KEENIO_HTTP : HTTP sockets handler
 
-## KEENIO_CLIENT : KeenIO Query Manager
+## KEENIO_CLIENT : KeenIO http_client
 
 ## KEENIO_HTTP::reqURL : Request url
 
