@@ -21,19 +21,19 @@ using namespace std;
 #pragma comment (lib, "AdvApi32.lib")
 
 
-#define DEFAULT_BUFLEN 1000000
+#define DEFAULT_BUFLEN 15900
 #define DEFAULT_PORT "80"
 
 /*
 [
-{"property_name":"path","operator":"ne","property_value":"/"},
-{"property_name":"action","operator":"eq","property_value":"/"},
-{"property_name":"action","operator":"gt","property_value":"/"},
-{"property_name":"action","operator":"gte","property_value":"/"},
-{"property_name":"action","operator":"lt","property_value":"/"},
-{"property_name":"action","operator":"lte","property_value":"/"},
-{"property_name":"action","operator":"contains","property_value":"/"},
-{"property_name":"action","operator":"not_contains","property_value":"/"}
+	{"property_name":"path","operator":"ne","property_value":"/"},
+	{"property_name":"action","operator":"eq","property_value":"/"},
+	{"property_name":"action","operator":"gt","property_value":"/"},
+	{"property_name":"action","operator":"gte","property_value":"/"},
+	{"property_name":"action","operator":"lt","property_value":"/"},
+	{"property_name":"action","operator":"lte","property_value":"/"},
+	{"property_name":"action","operator":"contains","property_value":"/"},
+	{"property_name":"action","operator":"not_contains","property_value":"/"}
 ]
 */
 
@@ -122,30 +122,20 @@ public:
 	KEENIO_HTTP kHTTP;
 	bool err = false;
 
-	string* cleanUp(string* str) {
-		string legal = "ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz:;, []{}\"'\\/0123456789~`!@#$%^&*()_+|.<>";
-
-		string cleanString;
-
-		for (int i = 0; i < (int)str->size(); i++)
+	bool recvraw(SOCKET socket, char *buf, int buflen)
+	{
+		unsigned char* p = (unsigned char*)malloc(sizeof(unsigned char*));
+		while (buflen > 0)
 		{
-			string search = str->substr(i, 1);
-			int found = legal.find(search);
-
-			if (found >= 0) {
-				if (search != " ") {
-					cleanString += search;
-				}
-			}
-			else {
-				break;
-			}
+			int received = recv(socket, buf, buflen, 0);
+			if (received < 1) return false;
+			p += received;
+			buflen -= received;
+			//printf(".");
 		}
-
-		*str = cleanString;
-
-		return str;
+		return true;
 	}
+
 	int request(KEENIO_HTTP kHTTP)
 	{
 		WSADATA wsaData;
@@ -286,12 +276,20 @@ public:
 
 #endif // DEBUG
 		// Receive until the peer closes the connection
-		iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-		string rec;
+		//iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 
-		for (int i = 0; i < (int)strlen(recvbuf); i++) {
-			rec += recvbuf[i];
+		string rec;
+		u_long iMode = 1;
+		//ioctlsocket(ConnectSocket, FIONBIO, &iMode);
+
+		Sleep(1000);
+		while (recvraw(ConnectSocket, recvbuf, 1)) {
+			rec += recvbuf;
+			//printf("%s", (char*)recvbuf);
+			strcpy(recvbuf, "");
 		}
+
+		
 
 #ifdef DEBUG
 
@@ -300,8 +298,7 @@ public:
 #else
 
 #endif // DEBUG
-		// cleanup
-		this->cleanUp(&rec);
+		//printf("\n\n%s\n\n", (char*)rec.c_str());
 		closesocket(ConnectSocket);
 		WSACleanup();
 
@@ -359,7 +356,6 @@ namespace KEENIO_QUERYLANGUAGE {
 
 			char *str = (char*)queryText.c_str();
 			char * pch;
-			printf("\nSplitting string \"%s\" into tokens:\n", str);
 			pch = strtok(str, " ");
 
 			bool filterMode = false;
@@ -379,28 +375,21 @@ namespace KEENIO_QUERYLANGUAGE {
 				word = pch;
 
 				if (!filterMode) {
+					string supported_types = "count count_unique sum average extraction";
+					int supportedType = supported_types.find(word);
 					int setter = word.find("(");
 					int psetter = word.find("=");
 					bool fmode = (word == "if");
 					int dRep = word.find(".export=");
 					if (dRep >= 0) {
 						downloadRep = dRep;
-
+						
 					}
 					if (fmode) {
 						filterMode = true;
 						goto restart_ql_loop;
 					}
-					if (word == "count") {
-						sel = word;
-					}
-					else if (word == "count_unique") {
-						sel = word;
-					}
-					else if (word == "sum") {
-						sel = word;
-					}
-					else if (word == "average") {
+					if (supportedType >= 0) {
 						sel = word;
 					}
 					else if (dRep >= 0) {
@@ -445,7 +434,7 @@ namespace KEENIO_QUERYLANGUAGE {
 							KEENIO_FILTER keenFilter;
 
 							if (eq >= 0 && gte<0 && lte < 0 && contains < 0 && not_contains < 0) {
-
+								
 								word1 = word.substr(0, eq);
 								wordval = word.substr(eq, word.length() - eq);
 								wordval = word.substr(eq + 1, word.length() - eq - 1);
@@ -457,19 +446,19 @@ namespace KEENIO_QUERYLANGUAGE {
 									int closeQuote = wordval.find("'");
 									if (closeQuote >= 0) {
 										concatMode = false;
-										wordval = word.substr(eq + 2, word.length() - eq - 3);
+										wordval = word.substr(eq + 2, word.length() - eq-3);
 									}
 								}
 								keenQueryFilterIndex = word1;
 
-
+								
 								keenFilter.op = "eq";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (ne >= 0 && gte<0 && lte < 0 && contains < 0 && not_contains < 0) {
-
+								
 								word1 = word.substr(0, ne);
 								wordval = word.substr(ne, word.length() - ne);
 								wordval = word.substr(ne + 2, word.length() - ne - 3);
@@ -481,19 +470,19 @@ namespace KEENIO_QUERYLANGUAGE {
 									int closeQuote = wordval.find("'");
 									if (closeQuote >= 0) {
 										concatMode = false;
-										wordval = word.substr(ne + 3, word.length() - ne - 4);
+										wordval = word.substr(ne + 3, word.length() - ne-4);
 									}
 								}
 								keenQueryFilterIndex = word1;
 
-
+								
 								keenFilter.op = "ne";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (gt >= 0 && gte < 0) {
-
+								
 								word1 = word.substr(0, gt);
 								wordval = word.substr(gt, word.length() - gt);
 								wordval = word.substr(gt + 1, word.length() - gt - 1);
@@ -505,19 +494,19 @@ namespace KEENIO_QUERYLANGUAGE {
 									int closeQuote = wordval.find("'");
 									if (closeQuote >= 0) {
 										concatMode = false;
-										wordval = word.substr(gt + 2, word.length() - gt - 3);
+										wordval = word.substr(gt + 2, word.length() - gt-3);
 									}
 								}
 								keenQueryFilterIndex = word1;
 
-
+								
 								keenFilter.op = "gt";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (lt >= 0 && lte < 0) {
-
+								
 								word1 = word.substr(0, lt);
 								wordval = word.substr(lt, word.length() - lt);
 								wordval = word.substr(lt + 1, word.length() - lt - 1);
@@ -529,19 +518,19 @@ namespace KEENIO_QUERYLANGUAGE {
 									int closeQuote = wordval.find("'");
 									if (closeQuote >= 0) {
 										concatMode = false;
-										wordval = word.substr(lt + 2, word.length() - lt - 3);
+										wordval = word.substr(lt + 2, word.length() - lt-3);
 									}
 								}
 								keenQueryFilterIndex = word1;
 
-
+								
 								keenFilter.op = "lt";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (gte >= 0) {
-
+								
 								word1 = word.substr(0, gte);
 								wordval = word.substr(gte, word.length() - gte);
 								wordval = word.substr(gte + 2, word.length() - gte - 1);
@@ -558,14 +547,14 @@ namespace KEENIO_QUERYLANGUAGE {
 								}
 								keenQueryFilterIndex = word1;
 
-
+								
 								keenFilter.op = "gte";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (lte >= 0) {
-
+								
 								word1 = word.substr(0, lte);
 								wordval = word.substr(lte, word.length() - lte);
 								wordval = word.substr(lte + 2, word.length() - lte - 1);
@@ -582,14 +571,14 @@ namespace KEENIO_QUERYLANGUAGE {
 								}
 								keenQueryFilterIndex = word1;
 
-
+								
 								keenFilter.op = "lte";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (contains >= 0 && not_contains < 0) {
-
+								
 								word1 = word.substr(0, contains);
 								wordval = word.substr(contains, word.length() - contains);
 								wordval = word.substr(contains + 1, word.length() - contains - 1);
@@ -606,14 +595,14 @@ namespace KEENIO_QUERYLANGUAGE {
 								}
 								keenQueryFilterIndex = word1;
 
-
+								
 								keenFilter.op = "contains";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (not_contains >= 0) {
-
+								
 								word1 = word.substr(0, not_contains);
 								wordval = word.substr(not_contains, word.length() - not_contains);
 								wordval = word.substr(not_contains + 3, word.length() - not_contains - 1);
@@ -630,7 +619,7 @@ namespace KEENIO_QUERYLANGUAGE {
 								}
 								keenQueryFilterIndex = word1;
 
-
+								
 								keenFilter.op = "not_contains";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
@@ -672,7 +661,7 @@ namespace KEENIO_QUERYLANGUAGE {
 
 			std::map<string, KEENIO_FILTER>::iterator kFil;
 			kFil = keenQueryFilters.begin();
-			for (kFil = keenQueryFilters.begin(); kFil != keenQueryFilters.end(); kFil++) {
+			for(kFil = keenQueryFilters.begin(); kFil != keenQueryFilters.end(); kFil++) {
 				if (kFilIndex == 0) {
 					fText += "{\"property_name\":\"";
 					fText += kFil->second.attr;
@@ -698,7 +687,7 @@ namespace KEENIO_QUERYLANGUAGE {
 			fText += "]";
 
 			qURL += "&filters=" + fText;
-
+			
 			return qURL;
 		}
 
