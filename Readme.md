@@ -34,6 +34,9 @@ This project uses WinSock to connect to a server, and retrieve information.
 ## Adding query params
 	
 	kCLIENT->kHTTP.addParam("api_key", kHTTP._masterKey);
+	kCLIENT->kHTTP.addParam("timeframe", "this_14_days");
+
+	//QUERY URL:: https://api.keen.io/3.0/projects/<project_id>/queries/count?api_key=mykey&timeframe=this_14_days
 
 ========================================================================
     Complete example
