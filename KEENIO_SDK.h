@@ -465,24 +465,43 @@ namespace KEENIO_QUERYLANGUAGE {
 					int x = 0;
 
 				}
-				else {
+				
+				else { //IF NOT IN FILTER MODE
 					if (concatMode == false) {
 						int initSetter = word.find("(");
 
 						{
+							//EQUALS OPERATOR FOUND
 							int eq = word.find("=");
+							
+							//NOT EQUALS OPERATOR FOUND
 							int ne = word.find("<>");
+							
+							//GREATER THAN OPERATOR FOUND
 							int gt = word.find(">");
+							
+							//LESS THAN OPERATOR FOUND
 							int lt = word.find("<");
+							
+							//GREATER THAN EQUAL TO OPERATOR FOUND
 							int gte = word.find(">=");
+							
+							//LESS THAN EQUAL TO OPERATOR FOUND
 							int lte = word.find("<=");
+							
+							//CONTAINS OPERATOR FOUND
 							int contains = word.find("^=");
+							
+							//NOT CONTAINS OPERATOR FOUND
 							int not_contains = word.find("!^=");
 							string word1;
 							string wordval;
+							
+							//FOR FILTER SUPPORT
 							KEENIO_FILTER keenFilter;
 
-							if (eq >= 0 && gte<0 && lte < 0 && contains < 0 && not_contains < 0) {
+							
+							if (eq >= 0 && gte<0 && lte < 0 && contains < 0 && not_contains < 0) { //IF OPERATOR IS `EQUAL_TO`
 								
 								word1 = word.substr(0, eq);
 								wordval = word.substr(eq, word.length() - eq);
@@ -506,13 +525,13 @@ namespace KEENIO_QUERYLANGUAGE {
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
-							else if (ne >= 0 && gte<0 && lte < 0 && contains < 0 && not_contains < 0) {
+							else if (ne >= 0 && gte<0 && lte < 0 && contains < 0 && not_contains < 0) { //IF OPERATOR IS `NOT_EQUALS`
 								
 								word1 = word.substr(0, ne);
 								wordval = word.substr(ne, word.length() - ne);
 								wordval = word.substr(ne + 2, word.length() - ne - 3);
 
-								if (wordval[0] == '\'') {
+								if (wordval[0] == '\'') { //IF START OF WORD IS APOSTROPHE? CONCAT_MODE=True
 									concatMode = true;
 									wordval = word.substr(ne + 2, word.length() - ne);
 
@@ -530,16 +549,17 @@ namespace KEENIO_QUERYLANGUAGE {
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
-							else if (gt >= 0 && gte < 0) {
+							else if (gt >= 0 && gte < 0) { // IF OPERATOR IS `GREATER_THAN_EQUAL_TO`
 								
 								word1 = word.substr(0, gt);
 								wordval = word.substr(gt, word.length() - gt);
 								wordval = word.substr(gt + 1, word.length() - gt - 1);
 
-								if (wordval[0] == '\'') {
+								if (wordval[0] == '\'') { //IF START OF WORD IS APOSTROPHE? CONCAT_MODE=True
 									concatMode = true;
 									wordval = word.substr(gt + 2, word.length() - gt);
 
+									//IF CLOSED QUOTE, CONCAT_MODE=False
 									int closeQuote = wordval.find("'");
 									if (closeQuote >= 0) {
 										concatMode = false;
@@ -560,7 +580,7 @@ namespace KEENIO_QUERYLANGUAGE {
 								wordval = word.substr(lt, word.length() - lt);
 								wordval = word.substr(lt + 1, word.length() - lt - 1);
 
-								if (wordval[0] == '\'') {
+								if (wordval[0] == '\'') { //IF START OF WORD IS APOSTROPHE? CONCAT_MODE=True
 									concatMode = true;
 									wordval = word.substr(lt + 2, word.length() - lt);
 
@@ -584,7 +604,7 @@ namespace KEENIO_QUERYLANGUAGE {
 								wordval = word.substr(gte, word.length() - gte);
 								wordval = word.substr(gte + 2, word.length() - gte - 1);
 
-								if (wordval[0] == '\'') {
+								if (wordval[0] == '\'') { //IF START OF WORD IS APOSTROPHE? CONCAT_MODE=True
 									concatMode = true;
 									wordval = word.substr(gte + 2, word.length() - gte);
 
@@ -608,7 +628,7 @@ namespace KEENIO_QUERYLANGUAGE {
 								wordval = word.substr(lte, word.length() - lte);
 								wordval = word.substr(lte + 2, word.length() - lte - 1);
 
-								if (wordval[0] == '\'') {
+								if (wordval[0] == '\'') { //IF START OF WORD IS APOSTROPHE? CONCAT_MODE=True
 									concatMode = true;
 									wordval = word.substr(lte + 2, word.length() - lte);
 
@@ -632,7 +652,7 @@ namespace KEENIO_QUERYLANGUAGE {
 								wordval = word.substr(contains, word.length() - contains);
 								wordval = word.substr(contains + 1, word.length() - contains - 1);
 
-								if (wordval[0] == '\'') {
+								if (wordval[0] == '\'') { //IF START OF WORD IS APOSTROPHE? CONCAT_MODE=True
 									concatMode = true;
 									wordval = word.substr(contains + 2, word.length() - contains);
 
@@ -656,7 +676,7 @@ namespace KEENIO_QUERYLANGUAGE {
 								wordval = word.substr(not_contains, word.length() - not_contains);
 								wordval = word.substr(not_contains + 3, word.length() - not_contains - 1);
 
-								if (wordval[0] == '\'') {
+								if (wordval[0] == '\'') { //IF START OF WORD IS APOSTROPHE? CONCAT_MODE=True
 									concatMode = true;
 									wordval = word.substr(not_contains + 3, word.length() - not_contains);
 
@@ -694,9 +714,11 @@ namespace KEENIO_QUERYLANGUAGE {
 				}
 
 			restart_ql_loop:
+				//GET NEXT WORD
 				pch = strtok(NULL, " ");
 			}
 
+			//SET QUERY STRING, EXECUTE THE QUERY
 			this->queryURL = queryText;
 			this->query_exec();
 			string qURL = "https://api.keen.io/3.0/projects/" + projectid;
@@ -708,6 +730,7 @@ namespace KEENIO_QUERYLANGUAGE {
 
 			int kFilIndex = 0;
 
+			//CREATE FILTER JSON STRING
 			std::map<string, KEENIO_FILTER>::iterator kFil;
 			kFil = keenQueryFilters.begin();
 			for(kFil = keenQueryFilters.begin(); kFil != keenQueryFilters.end(); kFil++) {
@@ -751,8 +774,10 @@ namespace KEENIO_QUERYLANGUAGE {
 
 			kCLIENT->request(kCLIENT->kHTTP);
 
+			//IF DOWNLOAD_REP, WRITE TO FILE
 			if (downloadRep >= 0) {
 				{
+					//WRITE/EXPORT TO FILE
 					ofstream out(downloadRepData, ios::out);
 					if (out)
 					{
