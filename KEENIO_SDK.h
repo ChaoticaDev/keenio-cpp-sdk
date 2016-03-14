@@ -36,17 +36,25 @@ using namespace std;
 	{"property_name":"action","operator":"not_contains","property_value":"/"}
 ]
 */
-
+//Handles HTTP RELATED FUNCTIONS AND DATA
 class KEENIO_HTTP {
 public:
+
+	//API REQUEST URL
 	string reqURL;
+	
+	//MAP OF HTTP HEADERS
 	map<string, string> _headers;
+	
+	//MAP OR HTTP PARAMETERS
 	map<string, string> _params;
 
+	//INSERT YOUR WRITE/READ/MASTER KEYS
 	string _writeKey = "<key>";
 	string _readKey = "<key>";
 	string _masterKey = "<key>";
 
+	//DEFAULT HEADERS REQUIRED FOR AN HTTP RESPONSE
 	void addDefHeaders(void) {
 		this->addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 		this->addHeader("Accept-Encoding", "gzip, deflate, sdch");
@@ -78,17 +86,21 @@ public:
 		return this->_writeKey;
 	}
 
+	//ADD A HEADER TO MAP
 	void addHeader(string head, string content) {
 		this->_headers[head] = content;
 	}
 
+	//ADD A PARAMETER TO MAP
 	void addParam(string head, string content) {
 		this->_params[head] = content;
 	}
 
+	//GET ALL HEADERS IN APPROPRIATE HTTP REQUEST FORMAT
 	string headers() {
 		string plain;
 
+		//LOOP THROUGH HEADERS MAP -> CONVERT TO HTTP HEADER REQUEST
 		for each (std::pair<string, string> header in this->_headers)
 		{
 			plain += header.first + ":" + header.second + "\r\n";
@@ -97,15 +109,19 @@ public:
 		return plain;
 	}
 
+	//GET ALL PARAMETERS
 	string params() {
 		string plain = this->reqURL;
 		int index = 0;
+		
+		//LOOP THROUGH PARAMETERS MAP -> CONVERT TO HTTP HEADER REQUEST
 		for each (std::pair<string, string> header in this->_params)
 		{
+			//FIRST PARAMETER SHOULD START WITH ?
 			if (index < 1) {
 				plain += "?" + header.first + "=" + header.second;
 			}
-			else {
+			else { //OTHERWISE &
 				plain += "&" + header.first + "=" + header.second;
 			}
 			index++;
@@ -115,27 +131,38 @@ public:
 	}
 };
 
-
+//KEENIO CLIENT ::: MAIN SDK CLIENT
 class KEENIO_CLIENT {
 public:
+
+	//BODY RESPONSE OF KEENIO_HTTP
 	string body;
+	
+	//HTTP HANDLER
 	KEENIO_HTTP kHTTP;
+	
+	//FPR ERROR DETECTION
 	bool err = false;
 
+	//HELP ENSURE WE GET EVERY BYTE OR CHARACTER FROM RESPONSE.
 	bool recvraw(SOCKET socket, char *buf, int buflen)
 	{
-		unsigned char* p = (unsigned char*)malloc(sizeof(unsigned char*));
+		//AS LONG AS RESPONSE IS NOT EMPTY
 		while (buflen > 0)
 		{
+			//RECEIVE THE BYTE
 			int received = recv(socket, buf, buflen, 0);
+			
+			//IF BYTE NOT RECEIVED, QUIT
 			if (received < 1) return false;
-			p += received;
+			
+			
 			buflen -= received;
-			//printf(".");
 		}
 		return true;
 	}
 
+	//INITIATES THE KEENIO_HTTP REQUEST
 	int request(KEENIO_HTTP kHTTP)
 	{
 		WSADATA wsaData;
@@ -276,16 +303,13 @@ public:
 
 #endif // DEBUG
 		// Receive until the peer closes the connection
-		//iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
 
 		string rec;
 		u_long iMode = 1;
-		//ioctlsocket(ConnectSocket, FIONBIO, &iMode);
 
 		Sleep(1000);
 		while (recvraw(ConnectSocket, recvbuf, 1)) {
 			rec += recvbuf;
-			//printf("%s", (char*)recvbuf);
 			strcpy(recvbuf, "");
 		}
 
@@ -298,7 +322,6 @@ public:
 #else
 
 #endif // DEBUG
-		//printf("\n\n%s\n\n", (char*)rec.c_str());
 		closesocket(ConnectSocket);
 		WSACleanup();
 
@@ -312,7 +335,7 @@ public:
 	}
 };
 
-
+//KEENIO_QUERY LANGUAGE
 namespace KEENIO_QUERYLANGUAGE {
 	class KEENIO_FILTER {
 	public:
@@ -329,38 +352,36 @@ namespace KEENIO_QUERYLANGUAGE {
 		void query_exec() {
 
 		}
+		//API Key
 		string api_key;
 
 	public:
+		//The API URL Generated from SQL
 		string queryURL;
+		
+		//.EXPORT directive used?
 		int downloadRep = -1;
 		string downloadRepData = "";
 
+		//Execute the query
 		string QueryExec(string queryText) {
 
-			//COUNT media_play(56c6fe8690e4bd30596e08ff) filters: keenid>0
-			int STMT_TYPE;
-
-			if (queryText.find("COUNT") >= 0) {
-				STMT_TYPE = 0;
-			}
-			else if (queryText.find("SUM") >= 0) {
-				STMT_TYPE = 1;
-			}
-			else if (queryText.find("AVERAGE") >= 0) {
-				STMT_TYPE = 2;
-			}
-			else {
-				STMT_TYPE = 666;
-			}
-
+			//CONVERT queryText TO char*
 			char *str = (char*)queryText.c_str();
 			char * pch;
+			
+			//SPLIT QUERY BY WORDS
 			pch = strtok(str, " ");
 
+			//FILTER MODE :: IF STATEMENT USED?
 			bool filterMode = false;
+			
+			//CONCATE MODE :: 'USED TO DETECT MULTI-WORD STRINGS'
 			bool concatMode = false;
+			
+			
 			bool initSetterDone = false;
+			
 			string sel;
 			string collection;
 			string projectid;
@@ -370,36 +391,64 @@ namespace KEENIO_QUERYLANGUAGE {
 			map<string, KEENIO_FILTER> keenQueryFilters;
 			string keenQueryFilterIndex;
 			string fText = "[";
+			
+			//LOOP WORDS
 			while (pch != NULL)
 			{
 				word = pch;
-
+				
+				//IF NOT IN FILTER MODE
 				if (!filterMode) {
+					
+					//LIST OF SUPPORTED QUERY TYPES
 					string supported_types = "count count_unique sum average extraction";
+					
+					//IS THE WORD FOUND A SUPPORTED TYPE
 					int supportedType = supported_types.find(word);
+					
+					//IS SETTER FOUND? :: USED TO SET (PROJECT_ID)
 					int setter = word.find("(");
+					
+					//PARAMETER BUILDER :: option=value . ?option=value
 					int psetter = word.find("=");
+					
+					//IF STATEMENT :: FILTER MODE?
 					bool fmode = (word == "if");
+					
+					//.EXPORT DIRECTIVE :: EXPORT TO FILE?
 					int dRep = word.find(".export=");
+					
+					//IF EXPORT TO FILE, SET downloadRep
 					if (dRep >= 0) {
 						downloadRep = dRep;
 						
 					}
+					
+					//IF `if` STATEMENT, SET FILTER_MODE TRUE
 					if (fmode) {
 						filterMode = true;
 						goto restart_ql_loop;
 					}
-					if (supportedType >= 0) {
+					
+					//IF SUPPORTED TYPE FOUND WITHOUT psetter && setter
+					if (supportedType >= 0 && setter < 0 && psetter < 0) {
 						sel = word;
 					}
+					
+					//IF DOWNLOAD REP, SET REP FILE NAME
 					else if (dRep >= 0) {
+						//PARSE FILENAME, EXTRACT FILE_NAME OF `.export=file.json`
 						string repName = word.substr(downloadRep + 8, word.length() - (downloadRep + 8));
-
+						
+						//SET THE DOWNLOAD_REPORT_NAME
 						downloadRepData = repName;
 					}
+					
+					
 					else if (setter >= 0) {
 						//IS SELECTOR
 
+						//PARSE (PROJECT_ID)
 						int paren1 = word.find("(");
 						collection = word.substr(0, paren1);
 
