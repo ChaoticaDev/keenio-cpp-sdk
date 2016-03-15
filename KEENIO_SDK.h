@@ -26,14 +26,14 @@ using namespace std;
 
 /*
 [
-	{"property_name":"path","operator":"ne","property_value":"/"},
-	{"property_name":"action","operator":"eq","property_value":"/"},
-	{"property_name":"action","operator":"gt","property_value":"/"},
-	{"property_name":"action","operator":"gte","property_value":"/"},
-	{"property_name":"action","operator":"lt","property_value":"/"},
-	{"property_name":"action","operator":"lte","property_value":"/"},
-	{"property_name":"action","operator":"contains","property_value":"/"},
-	{"property_name":"action","operator":"not_contains","property_value":"/"}
+{"property_name":"path","operator":"ne","property_value":"/"},
+{"property_name":"action","operator":"eq","property_value":"/"},
+{"property_name":"action","operator":"gt","property_value":"/"},
+{"property_name":"action","operator":"gte","property_value":"/"},
+{"property_name":"action","operator":"lt","property_value":"/"},
+{"property_name":"action","operator":"lte","property_value":"/"},
+{"property_name":"action","operator":"contains","property_value":"/"},
+{"property_name":"action","operator":"not_contains","property_value":"/"}
 ]
 */
 //Handles HTTP RELATED FUNCTIONS AND DATA
@@ -42,10 +42,10 @@ public:
 
 	//API REQUEST URL
 	string reqURL;
-	
+
 	//MAP OF HTTP HEADERS
 	map<string, string> _headers;
-	
+
 	//MAP OR HTTP PARAMETERS
 	map<string, string> _params;
 
@@ -113,7 +113,7 @@ public:
 	string params() {
 		string plain = this->reqURL;
 		int index = 0;
-		
+
 		//LOOP THROUGH PARAMETERS MAP -> CONVERT TO HTTP HEADER REQUEST
 		for each (std::pair<string, string> header in this->_params)
 		{
@@ -137,10 +137,10 @@ public:
 
 	//BODY RESPONSE OF KEENIO_HTTP
 	string body;
-	
+
 	//HTTP HANDLER
 	KEENIO_HTTP kHTTP;
-	
+
 	//FPR ERROR DETECTION
 	bool err = false;
 
@@ -152,11 +152,11 @@ public:
 		{
 			//RECEIVE THE BYTE
 			int received = recv(socket, buf, buflen, 0);
-			
+
 			//IF BYTE NOT RECEIVED, QUIT
 			if (received < 1) return false;
-			
-			
+
+
 			buflen -= received;
 		}
 		return true;
@@ -313,7 +313,7 @@ public:
 			strcpy(recvbuf, "");
 		}
 
-		
+
 
 #ifdef DEBUG
 
@@ -344,6 +344,7 @@ namespace KEENIO_QUERYLANGUAGE {
 		string val;
 	};
 
+
 	class KEENIO_QUERY {
 	private:
 
@@ -356,9 +357,50 @@ namespace KEENIO_QUERYLANGUAGE {
 		string api_key;
 
 	public:
+		class FILE_HANDLER {
+		public:
+			string fileContents;
+			string fileName;
+			string filePath;
+
+			string getFileContents() {
+				string fileData;
+				string line;
+				ifstream in(this->filePath + "" +this->fileName);
+				while (getline(in, fileData))
+				{
+					line += fileData + '\n';
+				}
+				fileData += '\0';
+				in.close();
+
+				if (line.length() > 0) {
+					this->fileContents = line;
+				}
+				return line;
+			}
+		};
+
+		class STRING_UTILS {
+		public:
+			static map<int, string> splitString(string str, string delim) {
+
+				map<int, string> strings;
+				char *token = strtok((char*)str.c_str(), (char*)delim.c_str());
+				while (token) {
+					strings[strings.size()] = token;
+					token = strtok(NULL, " ");
+				}
+
+				return strings;
+			}
+		};
+
+		map<string, string> VARS;
+
 		//The API URL Generated from SQL
 		string queryURL;
-		
+
 		//.EXPORT directive used?
 		int downloadRep = -1;
 		string downloadRepData = "";
@@ -369,19 +411,19 @@ namespace KEENIO_QUERYLANGUAGE {
 			//CONVERT queryText TO char*
 			char *str = (char*)queryText.c_str();
 			char * pch;
-			
+
 			//SPLIT QUERY BY WORDS
 			pch = strtok(str, " ");
 
 			//FILTER MODE :: IF STATEMENT USED?
 			bool filterMode = false;
-			
+
 			//CONCATE MODE :: 'USED TO DETECT MULTI-WORD STRINGS'
 			bool concatMode = false;
-			
-			
+
+
 			bool initSetterDone = false;
-			
+
 			string sel;
 			string collection;
 			string projectid;
@@ -391,60 +433,75 @@ namespace KEENIO_QUERYLANGUAGE {
 			map<string, KEENIO_FILTER> keenQueryFilters;
 			string keenQueryFilterIndex;
 			string fText = "[";
-			
+
 			//LOOP WORDS
 			while (pch != NULL)
 			{
 				word = pch;
+
+
+				/*
+					LOAD GLOBAL VARIABLES 
+					REPLACE WITH STRING X
+				*/
+				map<string, string>::iterator VARS_IT;
+				for (VARS_IT = this->VARS.begin(); VARS_IT != this->VARS.end(); VARS_IT++) {
 				
+					int pos = word.find(VARS_IT->first);
+					if (pos < 0) {
+						break;
+					}
+					word = word.replace(pos, VARS_IT->first.length(), VARS_IT->second);
+				}
+
 				//IF NOT IN FILTER MODE
 				if (!filterMode) {
-					
+
 					//LIST OF SUPPORTED QUERY TYPES
 					string supported_types = "count count_unique sum average extraction";
-					
+
 					//IS THE WORD FOUND A SUPPORTED TYPE
 					int supportedType = supported_types.find(word);
-					
+
 					//IS SETTER FOUND? :: USED TO SET (PROJECT_ID)
 					int setter = word.find("(");
-					
+
 					//PARAMETER BUILDER :: option=value . ?option=value
 					int psetter = word.find("=");
-					
+
 					//IF STATEMENT :: FILTER MODE?
 					bool fmode = (word == "if");
-					
+
 					//.EXPORT DIRECTIVE :: EXPORT TO FILE?
 					int dRep = word.find(".export=");
-					
+
 					//IF EXPORT TO FILE, SET downloadRep
 					if (dRep >= 0) {
 						downloadRep = dRep;
-						
+
 					}
-					
+
 					//IF `if` STATEMENT, SET FILTER_MODE TRUE
 					if (fmode) {
 						filterMode = true;
 						goto restart_ql_loop;
 					}
-					
+
 					//IF SUPPORTED TYPE FOUND WITHOUT psetter && setter
 					if (supportedType >= 0 && setter < 0 && psetter < 0) {
 						sel = word;
 					}
-					
+
 					//IF DOWNLOAD REP, SET REP FILE NAME
 					else if (dRep >= 0) {
 						//PARSE FILENAME, EXTRACT FILE_NAME OF `.export=file.json`
 						string repName = word.substr(downloadRep + 8, word.length() - (downloadRep + 8));
-						
+
 						//SET THE DOWNLOAD_REPORT_NAME
 						downloadRepData = repName;
 					}
-					
-					
+
+
 					else if (setter >= 0) {
 						//IS SELECTOR
 
@@ -465,7 +522,7 @@ namespace KEENIO_QUERYLANGUAGE {
 					int x = 0;
 
 				}
-				
+
 				else { //IF NOT IN FILTER MODE
 					if (concatMode == false) {
 						int initSetter = word.find("(");
@@ -473,36 +530,36 @@ namespace KEENIO_QUERYLANGUAGE {
 						{
 							//EQUALS OPERATOR FOUND
 							int eq = word.find("=");
-							
+
 							//NOT EQUALS OPERATOR FOUND
 							int ne = word.find("<>");
-							
+
 							//GREATER THAN OPERATOR FOUND
 							int gt = word.find(">");
-							
+
 							//LESS THAN OPERATOR FOUND
 							int lt = word.find("<");
-							
+
 							//GREATER THAN EQUAL TO OPERATOR FOUND
 							int gte = word.find(">=");
-							
+
 							//LESS THAN EQUAL TO OPERATOR FOUND
 							int lte = word.find("<=");
-							
+
 							//CONTAINS OPERATOR FOUND
 							int contains = word.find("^=");
-							
+
 							//NOT CONTAINS OPERATOR FOUND
 							int not_contains = word.find("!^=");
 							string word1;
 							string wordval;
-							
+
 							//FOR FILTER SUPPORT
 							KEENIO_FILTER keenFilter;
 
-							
+
 							if (eq >= 0 && gte<0 && lte < 0 && contains < 0 && not_contains < 0) { //IF OPERATOR IS `EQUAL_TO`
-								
+
 								word1 = word.substr(0, eq);
 								wordval = word.substr(eq, word.length() - eq);
 								wordval = word.substr(eq + 1, word.length() - eq - 1);
@@ -514,19 +571,19 @@ namespace KEENIO_QUERYLANGUAGE {
 									int closeQuote = wordval.find("'");
 									if (closeQuote >= 0) {
 										concatMode = false;
-										wordval = word.substr(eq + 2, word.length() - eq-3);
+										wordval = word.substr(eq + 2, word.length() - eq - 3);
 									}
 								}
 								keenQueryFilterIndex = word1;
 
-								
+
 								keenFilter.op = "eq";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (ne >= 0 && gte<0 && lte < 0 && contains < 0 && not_contains < 0) { //IF OPERATOR IS `NOT_EQUALS`
-								
+
 								word1 = word.substr(0, ne);
 								wordval = word.substr(ne, word.length() - ne);
 								wordval = word.substr(ne + 2, word.length() - ne - 3);
@@ -538,19 +595,19 @@ namespace KEENIO_QUERYLANGUAGE {
 									int closeQuote = wordval.find("'");
 									if (closeQuote >= 0) {
 										concatMode = false;
-										wordval = word.substr(ne + 3, word.length() - ne-4);
+										wordval = word.substr(ne + 3, word.length() - ne - 4);
 									}
 								}
 								keenQueryFilterIndex = word1;
 
-								
+
 								keenFilter.op = "ne";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (gt >= 0 && gte < 0) { // IF OPERATOR IS `GREATER_THAN_EQUAL_TO`
-								
+
 								word1 = word.substr(0, gt);
 								wordval = word.substr(gt, word.length() - gt);
 								wordval = word.substr(gt + 1, word.length() - gt - 1);
@@ -563,19 +620,19 @@ namespace KEENIO_QUERYLANGUAGE {
 									int closeQuote = wordval.find("'");
 									if (closeQuote >= 0) {
 										concatMode = false;
-										wordval = word.substr(gt + 2, word.length() - gt-3);
+										wordval = word.substr(gt + 2, word.length() - gt - 3);
 									}
 								}
 								keenQueryFilterIndex = word1;
 
-								
+
 								keenFilter.op = "gt";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (lt >= 0 && lte < 0) {
-								
+
 								word1 = word.substr(0, lt);
 								wordval = word.substr(lt, word.length() - lt);
 								wordval = word.substr(lt + 1, word.length() - lt - 1);
@@ -587,19 +644,19 @@ namespace KEENIO_QUERYLANGUAGE {
 									int closeQuote = wordval.find("'");
 									if (closeQuote >= 0) {
 										concatMode = false;
-										wordval = word.substr(lt + 2, word.length() - lt-3);
+										wordval = word.substr(lt + 2, word.length() - lt - 3);
 									}
 								}
 								keenQueryFilterIndex = word1;
 
-								
+
 								keenFilter.op = "lt";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (gte >= 0) {
-								
+
 								word1 = word.substr(0, gte);
 								wordval = word.substr(gte, word.length() - gte);
 								wordval = word.substr(gte + 2, word.length() - gte - 1);
@@ -616,14 +673,14 @@ namespace KEENIO_QUERYLANGUAGE {
 								}
 								keenQueryFilterIndex = word1;
 
-								
+
 								keenFilter.op = "gte";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (lte >= 0) {
-								
+
 								word1 = word.substr(0, lte);
 								wordval = word.substr(lte, word.length() - lte);
 								wordval = word.substr(lte + 2, word.length() - lte - 1);
@@ -640,14 +697,14 @@ namespace KEENIO_QUERYLANGUAGE {
 								}
 								keenQueryFilterIndex = word1;
 
-								
+
 								keenFilter.op = "lte";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (contains >= 0 && not_contains < 0) {
-								
+
 								word1 = word.substr(0, contains);
 								wordval = word.substr(contains, word.length() - contains);
 								wordval = word.substr(contains + 1, word.length() - contains - 1);
@@ -664,14 +721,14 @@ namespace KEENIO_QUERYLANGUAGE {
 								}
 								keenQueryFilterIndex = word1;
 
-								
+
 								keenFilter.op = "contains";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
 								keenQueryFilters[word1] = keenFilter;
 							}
 							else if (not_contains >= 0) {
-								
+
 								word1 = word.substr(0, not_contains);
 								wordval = word.substr(not_contains, word.length() - not_contains);
 								wordval = word.substr(not_contains + 3, word.length() - not_contains - 1);
@@ -688,7 +745,7 @@ namespace KEENIO_QUERYLANGUAGE {
 								}
 								keenQueryFilterIndex = word1;
 
-								
+
 								keenFilter.op = "not_contains";
 								keenFilter.attr = word1;
 								keenFilter.val = wordval;
@@ -697,7 +754,8 @@ namespace KEENIO_QUERYLANGUAGE {
 
 						}
 					}
-					else {
+					else { // IF CONCAT MODE = TRUE
+						// CONCAT VALUE
 						int closeQuote = word.find("'");
 						if (closeQuote >= 0) {
 							string tmpWord = word.substr(0, closeQuote);
@@ -733,7 +791,7 @@ namespace KEENIO_QUERYLANGUAGE {
 			//CREATE FILTER JSON STRING
 			std::map<string, KEENIO_FILTER>::iterator kFil;
 			kFil = keenQueryFilters.begin();
-			for(kFil = keenQueryFilters.begin(); kFil != keenQueryFilters.end(); kFil++) {
+			for (kFil = keenQueryFilters.begin(); kFil != keenQueryFilters.end(); kFil++) {
 				if (kFilIndex == 0) {
 					fText += "{\"property_name\":\"";
 					fText += kFil->second.attr;
@@ -759,7 +817,7 @@ namespace KEENIO_QUERYLANGUAGE {
 			fText += "]";
 
 			qURL += "&filters=" + fText;
-			
+
 			return qURL;
 		}
 
@@ -768,6 +826,7 @@ namespace KEENIO_QUERYLANGUAGE {
 		}
 
 		string ProcessQuery() {
+			/* SIMPLIFIES THE WORK */
 			KEENIO_CLIENT* kCLIENT = new KEENIO_CLIENT();
 			kCLIENT->kHTTP.reqURL = (char*)this->queryURL.c_str();
 			kCLIENT->kHTTP.addDefHeaders();
@@ -792,6 +851,38 @@ namespace KEENIO_QUERYLANGUAGE {
 		}
 
 		KEENIO_QUERY() {
+
+			/* 
+				SET FILE TO LOAD FOR INITIAL VARIABLE LOADING
+				LOAD GLOBAL VARIABLES
+			*/
+
+			FILE_HANDLER fHandle;
+			fHandle.filePath = "";
+			fHandle.fileName = "vars.keenio";
+
+			//READ FILES CONTENTS
+			string fileContents = fHandle.getFileContents();
+
+			//SPLIT STRING INTO PARTS SEPARATED BY `=`
+			map<int, string> Lines = STRING_UTILS::splitString(fileContents, "\n");
+
+			//LOOP THROUGH `Lines` VARIABLE
+			for (int i = 0; i < Lines.size(); i++) {
+				string line = Lines[i];
+				map<int, string> var_line = STRING_UTILS::splitString(line, "=");
+				
+				//IF SPLIT BY `=` SUCCESSFUL
+				if (var_line.size() > 1) {
+
+					//ADD GLOBAL VARIABLE
+					this->VARS[var_line[0]] = var_line[1];
+				}
+			}
+
+			/* END LOAD GLOBAL VARIABLES! */
+
+
 
 		}
 	};
