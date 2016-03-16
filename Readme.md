@@ -4,7 +4,7 @@
 
 KeenIO C++ SDK and Query language.
 
-This project covers most of KeenIO's APIs, and also includes a query language similar to SQL which allows for quick, easy data extraction.
+This project covers KeenIO's APIs, and also includes a query language similar to SQL which allows for quick, easy data extraction.
 
 ## WIKI
  Checkout the [wiki](https://github.com/UberSnip/keenio-cpp-sdk/wiki) for detailed implementation of this project :D
@@ -13,7 +13,9 @@ This project covers most of KeenIO's APIs, and also includes a query language si
  
  ["keenQL" SQL for KEENIO.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL)
  
- [keenQL filters.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL::Filters)
+ [keenQL filters.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL-Filters)
+ 
+ [keenQL Global Variables.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL-Global-Variables)
 
 
 ## Example usage
