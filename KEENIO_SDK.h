@@ -24,6 +24,17 @@ using namespace std;
 #define DEFAULT_BUFLEN 15900
 #define DEFAULT_PORT "80"
 
+<<<<<<< HEAD
+#define KEENIO_HTTP_GET KEENIO_HTTP::METHOD_GET()
+#define KEENIO_HTTP_POST KEENIO_HTTP::METHOD_POST()
+#define KEENIO_HTTP_PUT KEENIO_HTTP::METHOD_PUT()
+
+#define KEENIO_MASTER_KEY kCLIENT->kHTTP.masterKey()
+#define KEENIO_WRITE_KEY kCLIENT->kHTTP.writeKey()
+#define KEENIO_READ_KEY kCLIENT->kHTTP.readKey()
+
+=======
+>>>>>>> origin/master
 /*
 [
 {"property_name":"path","operator":"ne","property_value":"/"},
@@ -38,7 +49,25 @@ using namespace std;
 */
 //Handles HTTP RELATED FUNCTIONS AND DATA
 class KEENIO_HTTP {
+	//INSERT YOUR WRITE/READ/MASTER KEYS
+	string _writeKey = "<key>";
+	string _readKey = "<key>";
+	string _masterKey = "<key>";
 public:
+<<<<<<< HEAD
+	static string METHOD_GET() {
+		return "GET";
+	}
+
+	static string METHOD_POST() {
+		return "POST";
+	}
+
+	static string METHOD_PUT() {
+		return "PUT";
+	}
+=======
+>>>>>>> origin/master
 
 	//API REQUEST URL
 	string reqURL;
@@ -49,10 +78,13 @@ public:
 	//MAP OR HTTP PARAMETERS
 	map<string, string> _params;
 
+<<<<<<< HEAD
+=======
 	//INSERT YOUR WRITE/READ/MASTER KEYS
 	string _writeKey = "<key>";
 	string _readKey = "<key>";
 	string _masterKey = "<key>";
+>>>>>>> origin/master
 
 	//DEFAULT HEADERS REQUIRED FOR AN HTTP RESPONSE
 	void addDefHeaders(void) {
@@ -86,6 +118,11 @@ public:
 		return this->_writeKey;
 	}
 
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> origin/master
 	//ADD A HEADER TO MAP
 	void addHeader(string head, string content) {
 		this->_headers[head] = content;
@@ -133,16 +170,34 @@ public:
 
 //KEENIO CLIENT ::: MAIN SDK CLIENT
 class KEENIO_CLIENT {
+
+	string _method = "GET";
 public:
 
 	//BODY RESPONSE OF KEENIO_HTTP
 	string body;
+<<<<<<< HEAD
 
 	//HTTP HANDLER
 	KEENIO_HTTP kHTTP;
 
 	//FPR ERROR DETECTION
 	bool err = false;
+
+	string method(string _get_post_method = "") {
+		if (_get_post_method != "") {
+			this->_method = _get_post_method;
+		}
+		return this->_method;
+	}
+=======
+
+	//HTTP HANDLER
+	KEENIO_HTTP kHTTP;
+
+	//FPR ERROR DETECTION
+	bool err = false;
+>>>>>>> origin/master
 
 	//HELP ENSURE WE GET EVERY BYTE OR CHARACTER FROM RESPONSE.
 	bool recvraw(SOCKET socket, char *buf, int buflen)
@@ -261,7 +316,7 @@ public:
 
 		// Send an initial buffer
 
-		string headers = "GET " + kHTTP.params();
+		string headers = this->method() + " " + kHTTP.params();
 		headers += "\r\n";
 		headers += kHTTP.headers();
 
@@ -456,6 +511,7 @@ namespace KEENIO_QUERYLANGUAGE {
 
 				//IF NOT IN FILTER MODE
 				if (!filterMode) {
+<<<<<<< HEAD
 
 					//LIST OF SUPPORTED QUERY TYPES
 					string supported_types = "count count_unique sum average extraction";
@@ -492,6 +548,44 @@ namespace KEENIO_QUERYLANGUAGE {
 						sel = word;
 					}
 
+=======
+
+					//LIST OF SUPPORTED QUERY TYPES
+					string supported_types = "count count_unique sum average extraction";
+
+					//IS THE WORD FOUND A SUPPORTED TYPE
+					int supportedType = supported_types.find(word);
+
+					//IS SETTER FOUND? :: USED TO SET (PROJECT_ID)
+					int setter = word.find("(");
+
+					//PARAMETER BUILDER :: option=value . ?option=value
+					int psetter = word.find("=");
+
+					//IF STATEMENT :: FILTER MODE?
+					bool fmode = (word == "if");
+
+					//.EXPORT DIRECTIVE :: EXPORT TO FILE?
+					int dRep = word.find(".export=");
+
+					//IF EXPORT TO FILE, SET downloadRep
+					if (dRep >= 0) {
+						downloadRep = dRep;
+
+					}
+
+					//IF `if` STATEMENT, SET FILTER_MODE TRUE
+					if (fmode) {
+						filterMode = true;
+						goto restart_ql_loop;
+					}
+
+					//IF SUPPORTED TYPE FOUND WITHOUT psetter && setter
+					if (supportedType >= 0 && setter < 0 && psetter < 0) {
+						sel = word;
+					}
+
+>>>>>>> origin/master
 					//IF DOWNLOAD REP, SET REP FILE NAME
 					else if (dRep >= 0) {
 						//PARSE FILENAME, EXTRACT FILE_NAME OF `.export=file.json`
