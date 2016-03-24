@@ -24,7 +24,6 @@ using namespace std;
 #define DEFAULT_BUFLEN 15900
 #define DEFAULT_PORT "80"
 
-<<<<<<< HEAD
 #define KEENIO_HTTP_GET KEENIO_HTTP::METHOD_GET()
 #define KEENIO_HTTP_POST KEENIO_HTTP::METHOD_POST()
 #define KEENIO_HTTP_PUT KEENIO_HTTP::METHOD_PUT()
@@ -33,8 +32,15 @@ using namespace std;
 #define KEENIO_WRITE_KEY kCLIENT->kHTTP.writeKey()
 #define KEENIO_READ_KEY kCLIENT->kHTTP.readKey()
 
-=======
->>>>>>> origin/master
+#define KQL_EQUAL "eq" //fully supported
+#define KQL_NOT_EQUAL "ne" //fully supported
+#define KQL_GREATER_THAN "gt" //
+#define KQL_GREATER_THAN_EQUAL "gte" //
+#define KQL_LESS_THAN "lt" //
+#define KQL_LESS_THAN_EQUAL "lte" //
+#define KQL_CONTAINS "contains"
+#define KQL_NOT_CONTAINS "not_contains"
+
 /*
 [
 {"property_name":"path","operator":"ne","property_value":"/"},
@@ -54,7 +60,6 @@ class KEENIO_HTTP {
 	string _readKey = "<key>";
 	string _masterKey = "<key>";
 public:
-<<<<<<< HEAD
 	static string METHOD_GET() {
 		return "GET";
 	}
@@ -66,8 +71,6 @@ public:
 	static string METHOD_PUT() {
 		return "PUT";
 	}
-=======
->>>>>>> origin/master
 
 	//API REQUEST URL
 	string reqURL;
@@ -78,13 +81,6 @@ public:
 	//MAP OR HTTP PARAMETERS
 	map<string, string> _params;
 
-<<<<<<< HEAD
-=======
-	//INSERT YOUR WRITE/READ/MASTER KEYS
-	string _writeKey = "<key>";
-	string _readKey = "<key>";
-	string _masterKey = "<key>";
->>>>>>> origin/master
 
 	//DEFAULT HEADERS REQUIRED FOR AN HTTP RESPONSE
 	void addDefHeaders(void) {
@@ -118,11 +114,8 @@ public:
 		return this->_writeKey;
 	}
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> origin/master
 	//ADD A HEADER TO MAP
 	void addHeader(string head, string content) {
 		this->_headers[head] = content;
@@ -176,7 +169,6 @@ public:
 
 	//BODY RESPONSE OF KEENIO_HTTP
 	string body;
-<<<<<<< HEAD
 
 	//HTTP HANDLER
 	KEENIO_HTTP kHTTP;
@@ -190,14 +182,6 @@ public:
 		}
 		return this->_method;
 	}
-=======
-
-	//HTTP HANDLER
-	KEENIO_HTTP kHTTP;
-
-	//FPR ERROR DETECTION
-	bool err = false;
->>>>>>> origin/master
 
 	//HELP ENSURE WE GET EVERY BYTE OR CHARACTER FROM RESPONSE.
 	bool recvraw(SOCKET socket, char *buf, int buflen)
@@ -511,7 +495,6 @@ namespace KEENIO_QUERYLANGUAGE {
 
 				//IF NOT IN FILTER MODE
 				if (!filterMode) {
-<<<<<<< HEAD
 
 					//LIST OF SUPPORTED QUERY TYPES
 					string supported_types = "count count_unique sum average extraction";
@@ -548,44 +531,6 @@ namespace KEENIO_QUERYLANGUAGE {
 						sel = word;
 					}
 
-=======
-
-					//LIST OF SUPPORTED QUERY TYPES
-					string supported_types = "count count_unique sum average extraction";
-
-					//IS THE WORD FOUND A SUPPORTED TYPE
-					int supportedType = supported_types.find(word);
-
-					//IS SETTER FOUND? :: USED TO SET (PROJECT_ID)
-					int setter = word.find("(");
-
-					//PARAMETER BUILDER :: option=value . ?option=value
-					int psetter = word.find("=");
-
-					//IF STATEMENT :: FILTER MODE?
-					bool fmode = (word == "if");
-
-					//.EXPORT DIRECTIVE :: EXPORT TO FILE?
-					int dRep = word.find(".export=");
-
-					//IF EXPORT TO FILE, SET downloadRep
-					if (dRep >= 0) {
-						downloadRep = dRep;
-
-					}
-
-					//IF `if` STATEMENT, SET FILTER_MODE TRUE
-					if (fmode) {
-						filterMode = true;
-						goto restart_ql_loop;
-					}
-
-					//IF SUPPORTED TYPE FOUND WITHOUT psetter && setter
-					if (supportedType >= 0 && setter < 0 && psetter < 0) {
-						sel = word;
-					}
-
->>>>>>> origin/master
 					//IF DOWNLOAD REP, SET REP FILE NAME
 					else if (dRep >= 0) {
 						//PARSE FILENAME, EXTRACT FILE_NAME OF `.export=file.json`
