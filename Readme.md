@@ -31,6 +31,7 @@ This project covers KeenIO's APIs, and also includes a query language similar to
 		kCLIENT->kHTTP.addParam("timezone", "UTC");
 		kCLIENT->kHTTP.addParam("timeframe", "this_14_days");
 
+		kCLIENT->method(KEENIO_HTTP_GET);
 		kCLIENT->request(kCLIENT->kHTTP);
 
 		printf(kCLIENT->body.c_str());
