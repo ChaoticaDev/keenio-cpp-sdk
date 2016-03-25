@@ -20,13 +20,41 @@ This project covers KeenIO's APIs, and also includes a query language similar to
 
 ## Example usage
 
+	#pragma once
 	#include "KEENIO_SDK.h"
-	int main() {
+
+	// SEND DATA TO KEENIO
+	//EVENT = app_event, DATA = 'xLAUNCH' Base64Encoded
+	int sendData(){
 		KEENIO_CLIENT* kCLIENT = new KEENIO_CLIENT();
-		kCLIENT->kHTTP.reqURL = "https://api.keen.io/3.0/projects/<project_id>/events";
+		kCLIENT->kHTTP.reqURL = "https://api.keen.io/3.0/projects/PROJECT_ID/events";
 		kCLIENT->kHTTP.addDefHeaders();
 
-		kCLIENT->kHTTP.addParam("api_key", kCLIENT->kHTTP._masterKey);
+		kCLIENT->kHTTP.addParam("api_key", "<master_key>");
+
+		string dataParam[2] = { "app_event", "xLAUNCH" };
+		kCLIENT->kHTTP.addDataParam("data", dataParam);
+		kCLIENT->method(KEENIO_HTTP_GET);
+		kCLIENT->request(kCLIENT->kHTTP);
+
+		printf(kCLIENT->body.c_str());
+	
+		return 1;
+	}
+
+	int main() {
+		KEENIO_QUERYLANGUAGE::KEENIO_QUERY* keenQL = new KEENIO_QUERYLANGUAGE::KEENIO_QUERY();
+		keenQL->KEY("<write_key>");
+		keenQL->QueryExec(".export=example_exp.txt extraction pageview({$PROJECT_ID}) event_collection=pageview timezone=UTC timeframe=this_100_days if keen.id>0 && path<>'//'");
+
+		printf("---QUERY REQUEST---\n%s", (char*)keenQL->ProcessQuery().c_str());
+	
+	
+		KEENIO_CLIENT* kCLIENT = new KEENIO_CLIENT();
+		kCLIENT->kHTTP.reqURL = "https://api.keen.io/3.0/projects/PROJECT_ID/events";
+		kCLIENT->kHTTP.addDefHeaders();
+
+		kCLIENT->kHTTP.addParam("api_key", "<read_key>");
 		kCLIENT->kHTTP.addParam("event_collection", "pageview");
 		kCLIENT->kHTTP.addParam("timezone", "UTC");
 		kCLIENT->kHTTP.addParam("timeframe", "this_14_days");
@@ -35,9 +63,10 @@ This project covers KeenIO's APIs, and also includes a query language similar to
 		kCLIENT->request(kCLIENT->kHTTP);
 
 		printf(kCLIENT->body.c_str());
-		
-		//QUERY URL:: https://api.keen.io/3.0/projects/<project_id>/queries/count?api_key=<key>&event_collection=pageview&timezone=UTC&timeframe=this_14_days
-		return 1; // Returns {"result":170}
+	
+		sendData();
+	
+		return 0;
 	}
 
 
