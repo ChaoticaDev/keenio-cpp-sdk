@@ -21,8 +21,7 @@ This API connects to KeenIO over Winsock.
  
 
 # The KeenIO Client
-The KeenIO Client is the main handler for the KeenIO C++ API. Handles include by not limited to
- Keen related data such as keys, events, etc.
+The KeenIO Client is the main handler for the KeenIO C++ API. Handles include Keen related data such as keys, events, etc.
 
 ## The KeenIO HTTP Client
 The HTTP client handles `network` and request related information such as headers, api parameters, and sending/receiving requests. (WinSock!)
