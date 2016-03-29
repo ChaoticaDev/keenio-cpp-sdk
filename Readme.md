@@ -13,7 +13,7 @@ This API connects to KeenIO over Winsock.
  
  [The C++ Framework.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/KeenIO-CPP-SDK)
  
- ["keenQL" SQL for KEENIO.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL)
+ ["keentycs": simple analytics extraction language for KeenIO.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL)
  
  [keenQL filters.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL-Filters)
  
