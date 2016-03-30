@@ -8,10 +8,14 @@ This project covers KeenIO's APIs, and also includes a query language similar to
 
 This API connects to KeenIO over Winsock.
 
+##### Documentation
+
+[KEENIO_CLIENT](https://github.com/UberSnip/keenio-cpp-sdk/wiki/class::KEENIO_CLIENT)
+
+[HEENIO_HTTP](https://github.com/UberSnip/keenio-cpp-sdk/wiki/class::KEENIO_HTTP)
+
 ## WIKI
  Checkout the [wiki](https://github.com/UberSnip/keenio-cpp-sdk/wiki) for detailed implementation of this project :D
- 
- [The C++ Framework.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/KeenIO-CPP-SDK)
  
  ["keentycs": simple analytics extraction language for KeenIO.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL)
  
