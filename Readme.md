@@ -109,7 +109,9 @@ A quick snippet with minimal required code
 	kCLIENT->request(kCLIENT->kHTTP);
 
 	printf(kCLIENT->body.c_str());
-		
+	
+# Examples
+[Inspect single project](https://github.com/UberSnip/keenio-cpp-sdk/wiki/EXAMPLE::InspectProject)
 	
 ## Complete example	
 
