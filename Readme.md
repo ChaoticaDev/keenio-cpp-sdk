@@ -111,7 +111,9 @@ A quick snippet with minimal required code
 	printf(kCLIENT->body.c_str());
 	
 # Examples
+
 [Inspect single project](https://github.com/UberSnip/keenio-cpp-sdk/wiki/EXAMPLE::InspectProject)
+
 [Inspect all collections](https://github.com/UberSnip/keenio-cpp-sdk/wiki/EXAMPLE::InspectAllCollections)
 	
 ## Complete example	
