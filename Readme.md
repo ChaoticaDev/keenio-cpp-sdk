@@ -24,10 +24,10 @@ This API connects to KeenIO over Winsock.
  [keenQL Global Variables.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL-Global-Variables)
  
 
-# The KeenIO Client
+## [The KeenIO Client](https://github.com/UberSnip/keenio-cpp-sdk/wiki/class::KEENIO_CLIENT)
 The KeenIO Client is the main handler for the KeenIO C++ API. Handles include Keen related data such as keys, events, etc.
 
-## The KeenIO HTTP Client
+## [The KeenIO HTTP Client](https://github.com/UberSnip/keenio-cpp-sdk/wiki/class::KEENIO_HTTP)
 The HTTP client handles `network` and request related information such as headers, api parameters, and sending/receiving requests. (WinSock!)
 
 ### Adding headers
