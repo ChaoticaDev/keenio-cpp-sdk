@@ -56,6 +56,8 @@ Minimal headers can be added via function `KEENIO_HTTP::addDefHeaders()`
 	KEENIO_CLIENT* kCLIENT;
 	kCLIENT->kHTTP.addDefHeaders();
 	
+	//DATA IS RETURNED AS JSON STRING
+	
 ### Adding URL Parameters
 After connecting to the KeenIO API server, this client requests resources via URL. `IE: https://api.keen.io/3.0/projects/PROJECT_ID/events?api_key=1234&timeframe=this_14_days`
 
@@ -68,6 +70,8 @@ Parameters are added in the same manner as `headers`.
 	//Example
 	KEENIO_CLIENT* kCLIENT;
 	kCLIENT->kHTTP.addParam("api_key", "1234");
+	
+	//DATA IS RETURNED AS JSON STRING
 	
 	
 #### Adding Base64 parameters.
