@@ -17,11 +17,11 @@ This API connects to KeenIO over Winsock.
 ## WIKI
  Checkout the [wiki](https://github.com/UberSnip/keenio-cpp-sdk/wiki) for detailed implementation of this project :D
  
- ["keentycs": simple analytics extraction language for KeenIO.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL)
+ ["keentycs": simple analytics extraction language for KeenIO.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keentycs)
  
- [keenQL filters.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL-Filters)
+ [keenQL filters.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keentycs-Filters)
  
- [keenQL Global Variables.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keenQL-Global-Variables)
+ [keenQL Global Variables.](https://github.com/UberSnip/keenio-cpp-sdk/wiki/keentycs-Global-Variables)
  
 
 ## [The KeenIO Client](https://github.com/UberSnip/keenio-cpp-sdk/wiki/class::KEENIO_CLIENT)
