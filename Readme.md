@@ -185,8 +185,8 @@ The managed C++ version is app-store ready, and simplifies the KeenIO API to min
 
 	// Load the project, all of it's collections, and the properties of each collection
 	KeenIOAPI::KEENIO_PROJECT^ keen_project = ref new KeenIOAPI::KEENIO_PROJECT();
-	keen_project->ID = "56f3b1df96773d6273dbdb9f";
-	keen_project->MasterKey = "534C1A8AE324403671F967C4BB348B122D73397473D2E8444914E8688CE8CBF9";
+	keen_project->ID = "";
+	keen_project->MasterKey = "";
 	keen_project->LoadProject();
 	
 	//Sending an event to KeenIO
