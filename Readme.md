@@ -175,6 +175,25 @@ A quick snippet with minimal required code
 		return 0;
 	}
 
+---
 
+### Managed C++ Version (App-Store ready)
+
+The managed C++ version is app-store ready, and simplifies the KeenIO API to minimal lines of code, while achieving the same results.
+
+##### Example : Load project resources
+
+	// Load the project, all of it's collections, and the properties of each collection
+	KeenIOAPI::KEENIO_PROJECT^ keen_project = ref new KeenIOAPI::KEENIO_PROJECT();
+	keen_project->ID = "56f3b1df96773d6273dbdb9f";
+	keen_project->MasterKey = "534C1A8AE324403671F967C4BB348B122D73397473D2E8444914E8688CE8CBF9";
+	keen_project->LoadProject();
+	
+	//Sending an event to KeenIO
+	keen_project->SendEvent("COLLECTION_NAME", "EVENT_NAME", "EVENT_VALUE");
+	
+	//Receive KeenIO API Request (JSON String)
+	keen_project->ReceiveData("api_url_with_parameters");
+	
 
 Disclaimer: This product is in no way affiliated with KeenIO -- This is a community project, though, we would be very open to KeenIO picking up the project in the future! :D
