@@ -181,6 +181,8 @@ A quick snippet with minimal required code
 
 The managed C++ version is app-store ready, and simplifies the KeenIO API to minimal lines of code, while achieving the same results.
 
+Documentation on managed code can be found via [Wiki](https://github.com/UberSnip/keenio-cpp-sdk/wiki/Managed-Code)
+
 ##### Example : Load project resources
 
 	// Load the project, all of it's collections, and the properties of each collection
