@@ -652,7 +652,7 @@ public:
 			this->error = false;
 		}
 
-		void SentEvent(Platform::String^ collection, Platform::String^ event_name, Platform::String^ event_property) {
+		void SendEvent(Platform::String^ collection, Platform::String^ event_name, Platform::String^ event_property) {
 
 			if (!this->verified) {return;}
 
