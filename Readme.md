@@ -133,7 +133,7 @@ A quick snippet with minimal required code
 	//EVENT = app_event, DATA = 'xLAUNCH' Base64Encoded
 	int sendData(){
 		KEENIO_CLIENT* kCLIENT = new KEENIO_CLIENT();
-		kCLIENT->kHTTP.reqURL = "https://api.keen.io/3.0/projects/PROJECT_ID/events";
+		kCLIENT->kHTTP.reqURL = "https://api.keen.io/3.0/projects/PROJECT_ID/events/COLLECTION_NAME";
 		kCLIENT->kHTTP.addDefHeaders();
 
 		kCLIENT->kHTTP.addParam("api_key", "<master_key>");
